@@ -1,19 +1,27 @@
 import requests
 import re
 from datetime import date
+from typing import List
 
-url = "https://www.bbc.com/news/live/world-europe-60774819"
-page = requests.get(url)
+def get_points() -> List[str]:
+  url = "https://www.bbc.com/news/live/world-europe-60774819"
+  page = requests.get(url)
 
-exp = re.compile(r"class=\"lx-c-summary-points__item\".*?>(.*?)<")
+  exp = re.compile(r"class=\"lx-c-summary-points__item\".*?>(.*?)<")
+  return exp.findall(page.text)
 
-points = exp.findall(page.text)
-marked_points = map(lambda x: "- " + x, points)
+def flatten_points(points : List[str]) -> str:
+  marked_points = map(lambda x: "- " + x, points)
 
-text = "\n\n".join(marked_points)
-corrected_text = text.replace("&#x27;", "'")
+  text = "\n\n".join(marked_points)
+  corrected_apostrophes = text.replace("&#x27;", "'")
+  return corrected_apostrophes
 
-header = "BBC's Summary - " + date.today().strftime("%B %d, %Y")
-final = header + "\n```\n" + corrected_text + "\n```"
+def add_header(text : str) -> str:
+  header = "BBC's Summary - " + date.today().strftime("%B %d, %Y")
+  final = header + "\n```\n" + text + "\n```"
+  return final
 
-print(final)
+text = add_header(flatten_points(get_points()))
+
+print(text)
