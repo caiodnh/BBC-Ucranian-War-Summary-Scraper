@@ -2,6 +2,7 @@ from typing import Any, Iterable
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
+from functools import reduce
 
 def read_url() -> str:
   # the last line in the file corresponds to the most recent webpage
@@ -9,6 +10,11 @@ def read_url() -> str:
     for line in file:
       url = line
   return url
+
+def get_page(url : str) -> Any: # returns the page as BeatifulSoup object
+  page = requests.get(url)
+  soup = BeautifulSoup(page.content, "html5lib")
+  return soup
 
 def update_page(soup : Any) -> Any:
   # check if there is a new page and, in this case, updade both the file and soup object
@@ -29,14 +35,6 @@ def update_page(soup : Any) -> Any:
 
   return soup
 
-def get_page() -> Any: # returns the page as BeatifulSoup object
-  
-  url = read_url()
-  page = requests.get(url)
-  soup = BeautifulSoup(page.content, "html5lib")
-  new_soup = update_page(soup)
-  return new_soup
-
 def get_points(soup : Any) -> Iterable[str]:
   items = soup.find_all("li", class_ = "lx-c-summary-points__item")
   return (item.contents[0] for item in items)
@@ -52,6 +50,9 @@ def add_header(text : str) -> str:
   final = header + "\n```\n" + text + "\n```"
   return final
 
-text = add_header(flatten_points(get_points(get_page())))
+def get_summary() -> str:
+  url = read_url()
+  funcs = [get_page, update_page, get_points, flatten_points, add_header]
+  return reduce(lambda x, f: f(x), funcs, url)
 
-print(text)
+print(get_summary())
