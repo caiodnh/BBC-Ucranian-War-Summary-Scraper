@@ -4,8 +4,14 @@ from typing import Iterable
 
 from bs4 import BeautifulSoup
 
-def get_points() -> Iterable[str]:
-  url = "https://www.bbc.com/news/live/world-europe-60802572"
+def get_url() -> str:
+  with open('saved_url.txt') as file:
+    url = file.readline()
+  return url
+
+
+def get_points(url : str) -> Iterable[str]:
+  # url = "https://www.bbc.com/news/live/world-europe-60802572"
   page = requests.get(url)
 
   soup = BeautifulSoup(page.content, 'html5lib')
@@ -23,6 +29,6 @@ def add_header(text : str) -> str:
   final = header + "\n```\n" + text + "\n```"
   return final
 
-text = add_header(flatten_points(get_points()))
+text = add_header(flatten_points(get_points(get_url())))
 
 print(text)
