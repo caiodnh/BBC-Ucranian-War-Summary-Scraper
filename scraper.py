@@ -39,20 +39,21 @@ def get_points(soup : Any) -> Iterable[str]:
   items = soup.find_all("li", class_ = "lx-c-summary-points__item")
   return (item.contents[0] for item in items)
 
-def flatten_points(points : Iterable[str]) -> str:
+def render_points(points : Iterable[str]) -> str:
   marked_points = ("- " + point for point in points)
-
-  text = "\n\n".join(marked_points)
-  return text
+  flatten = "\n\n".join(marked_points)
+  wrapped = "\n```\n" + flatten + "\n```"
+  return wrapped
 
 def add_header(text : str) -> str:
-  header = datetime.now().strftime("BBC's Summary - %B %d, %Y at %H:%M:%S")
-  final = header + "\n```\n" + text + "\n```"
+  header = datetime.now().strftime("Retrived on %B %d, %Y at %H:%M:%S")
+  final = header + text
   return final
 
 def get_summary() -> str:
   url = read_url()
-  funcs = [get_page, update_page, get_points, flatten_points, add_header]
+  funcs = [get_page, update_page, get_points, render_points]
   return reduce(lambda x, f: f(x), funcs, url)
 
-print(get_summary())
+if __name__ == "__main__":
+  print(get_summary())
