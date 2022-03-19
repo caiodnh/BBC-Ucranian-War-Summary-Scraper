@@ -13,7 +13,7 @@ def get_points() -> Iterable[str]:
   return (item.contents[0] for item in items)
 
 def flatten_points(points : Iterable[str]) -> str:
-  marked_points = map(lambda x: "- " + x, points)
+  marked_points = ("- " + point for point in points)
 
   text = "\n\n".join(marked_points)
   return text
