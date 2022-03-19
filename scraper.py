@@ -4,7 +4,7 @@ from datetime import date
 from typing import List
 
 def get_points() -> List[str]:
-  url = "https://www.bbc.com/news/live/world-europe-60774819"
+  url = "https://www.bbc.com/news/live/world-europe-60802572"
   page = requests.get(url)
 
   exp = re.compile(r"class=\"lx-c-summary-points__item\".*?>(.*?)<")
