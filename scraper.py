@@ -44,12 +44,12 @@ def get_points(soup : Any) -> Iterable[str]:
 
 def render_points(points : Iterable[str]) -> str:
   global url
-  
+
   marked_points = ("- " + point for point in points)
   flatten = "\n\n".join(marked_points)
   wrapped = "\n```\n" + flatten + "\n```"
-  final = wrapped + url
-  return wrapped
+  final = wrapped + "\n" + url
+  return final
 
 def add_header(text : str) -> str:
   header = datetime.now().strftime("Retrived on %B %d, %Y at %H:%M:%S")
