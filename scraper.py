@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 
 def read_url() -> str:
   # the last line in the file corresponds to the most recent webpage
-  with open('saved_url.txt', 'r') as file:
+  with open('saved_urls.txt', 'r') as file:
     for line in file:
       url = line
   return url
@@ -26,7 +26,7 @@ def update_page(url : str, soup : Any) -> Tuple[str, Any]:
     soup = get_page(url)
 
     # save url as the last line in the file
-    with open('saved_url.txt', 'a') as file:
+    with open('saved_urls.txt', 'a') as file:
       file.write("\n" + url)
       
     url, soup = update_page(url, soup)
