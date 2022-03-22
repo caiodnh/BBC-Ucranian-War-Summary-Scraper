@@ -48,7 +48,7 @@ def render_points(points : Iterable[str]) -> str:
   marked_points = ("- " + point for point in points)
   flatten = "\n\n".join(marked_points)
   wrapped = "\n```\n" + flatten + "\n```"
-  final = wrapped + "\n" + url
+  final = wrapped + "\n" + "<" + url +">"
   return final
 
 def add_header(text : str) -> str:
