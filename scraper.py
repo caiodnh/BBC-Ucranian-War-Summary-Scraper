@@ -23,18 +23,17 @@ def update_page(soup : Any) -> Any:
   # check if there is a new page and, in this case, updade both the file and soup object
 
   last_post = soup.find("li", class_ = "lx-stream__post-container placeholder-animation-finished")
-  found_link = last_post.find("a", alt = "this webpage here")
+  header = last_post.find("header").find("span").contents[0]
 
-  if found_link:
-    url = found_link["href"]
-
-    # new soup object
-    new_page = requests.get(url)
-    soup = BeautifulSoup(new_page.content, "html5lib")
+  if header == 'Our live coverage is moving':
+    link = last_post.find("a")
+    url = link["href"]
+    soup = get_page(url)
 
     # save url as the last line in the file
     with open('saved_url.txt', 'a') as file:
-      file.write(url)
+      file.write("\n" + url)
+    soup = update_page(soup)
 
   return soup
 
