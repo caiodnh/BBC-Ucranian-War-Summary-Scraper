@@ -14,13 +14,21 @@ def get_page(url : str) -> Any: # returns the page as BeatifulSoup object
   soup = BeautifulSoup(page.content, "html5lib")
   return soup
 
+def find_last_post(soup : Any) -> Any:
+  post = soup.find("li", class_ = "lx-stream__post-container placeholder-animation-finished")
+  header = post.find("header").find("span").contents[0]
+  header = header.lower()
+  if "live" in header and "moving" in header:
+    return post
+  else:
+    return None
+
 def update_page(url : str, soup : Any) -> Tuple[str, Any]:
   # check if there is a new page and, in this case, updade both the file and soup object
 
-  last_post = soup.find("li", class_ = "lx-stream__post-container placeholder-animation-finished")
-  header = last_post.find("header").find("span").contents[0]
+  last_post = find_last_post(soup)
 
-  if header == 'Our live coverage is moving':
+  if last_post:
     link = last_post.find("a")
     url = link["href"]
     soup = get_page(url)
