@@ -35,7 +35,7 @@ def aljazeera_get_points(url : str) -> Iterable[str]:
       return point.contents[0]
 
   def flatten_item(item):
-    return " ".join(point_content(point) for point in item)
+    return "".join(point_content(point) for point in item)
 
   return (flatten_item(item) for item in items)
 
