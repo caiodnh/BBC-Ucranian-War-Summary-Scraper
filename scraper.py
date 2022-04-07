@@ -68,6 +68,19 @@ def get_summary(live_news : LiveNews) -> str:
   points = live_news.get_points(liveblog_url)
   return render(points, liveblog_url)
 
+def get_map() -> str:
+  liveblog_url = find_liveblog_url(aljazeera)
+  page = requests.get(liveblog_url)
+  soup = BeautifulSoup(page.content, "html5lib")
+  content = soup.find(class_="wysiwyg wysiwyg--all-content css-1ck9wyi")
+
+  image_tag = content.find("img")
+  image_src = aljazeera.main_url + image_tag["src"]
+  clean_src = re.search(r"^.*(?=\?)", image_src).group(0)
+
+  return clean_src
+
 if __name__ == "__main__":
-  print(get_summary(bbc))
-  print(get_summary(aljazeera))
+  # print(get_summary(bbc))
+  # print(get_summary(aljazeera))
+  print(ukraine_map())
