@@ -14,31 +14,34 @@ class LiveNews(ABC):
   # These 3 attributes that should be specified by subclasses
   @property
   @abstractmethod
-  def home_url(self) -> str:
+  def home_url(cls) -> str:
     pass
 
   @abstractmethod
-  def find_liveblog(self, soup : Soup) -> str:
+  def find_liveblog(cls, soup : Soup) -> str:
     pass
 
   @abstractmethod
-  def get_points(self, soup : Soup) -> List[str]:
+  def get_points(cls, soup : Soup) -> List[str]:
     pass
 
   # What follows will be the same for all subclasses:
-  def get_liveblog_url(self) -> None:
-    soup_home = get_soup(self.home_url)
-    return self.home_url + self.find_liveblog(soup_home)
+  @classmethod
+  def get_liveblog_url(cls) -> None:
+    soup_home = get_soup(cls.home_url)
+    return cls.home_url + cls.find_liveblog(soup_home)
 
-  def summary_points(self, url : Optional[str] = None) -> List[str]:
+  @classmethod
+  def summary_points(cls, url : Optional[str] = None) -> List[str]:
     if url is None:
-      url = self.get_liveblog_url()
+      url = cls.get_liveblog_url()
     soup_liveblog = get_soup(url)
-    return self.get_points(soup_liveblog)
+    return cls.get_points(soup_liveblog)
 
-  def render_summary_points(self) -> str:
-    liveblog_url = self.get_liveblog_url()
-    points = self.summary_points(url = liveblog_url)
+  @classmethod
+  def render_summary_points(cls) -> str:
+    liveblog_url = cls.get_liveblog_url()
+    points = cls.summary_points(url = liveblog_url)
 
     marked_points = ["- " + point for point in points]
     flattened_points = "\n\n".join(marked_points)
@@ -51,7 +54,8 @@ class LiveNews(ABC):
 class BBC(LiveNews):
     home_url = "https://www.bbc.com"
 
-    def find_liveblog(self, soup : Soup) -> str:
+    @classmethod
+    def find_liveblog(cls, soup : Soup) -> str:
       links = soup.find_all("a")
       
       pat = re.compile(r"/news/live/world-europe-.*")
@@ -71,14 +75,16 @@ class BBC(LiveNews):
             return url
       raise ValueError("Couldn't find a liveblog on BBC's frontpage")
 
-    def get_points(self, soup : Soup) -> List[str]:
+    @classmethod
+    def get_points(cls, soup : Soup) -> List[str]:
       items = soup.find_all("li", class_ = "lx-c-summary-points__item")
       return [item.contents[0] for item in items]
 
 class Aljazeera(LiveNews):
     home_url = "https://www.aljazeera.com"
 
-    def find_liveblog(self, soup : Any) -> str:
+    @classmethod
+    def find_liveblog(cls, soup : Any) -> str:
       fte_articles = soup.find_all("div", class_ = "fte-article__title")
 
       liveblogs = []
@@ -96,7 +102,8 @@ class Aljazeera(LiveNews):
           return url
       raise ValueError("Couldn't find a liveblog about Ukraine on Aljazeera's frontpage")
 
-    def get_points(self, soup : Soup) -> List[str]:
+    @classmethod
+    def get_points(cls, soup : Soup) -> List[str]:
       block = soup.find(class_="wysiwyg wysiwyg--all-content css-1ck9wyi")
       items = block.find_all("li")
 
@@ -111,19 +118,17 @@ class Aljazeera(LiveNews):
 
       return [flatten_item(item) for item in items]
 
-    def get_map(self) -> str:
-      liveblog_url = self.get_liveblog_url()
+    @classmethod
+    def get_map(cls) -> str:
+      liveblog_url = cls.get_liveblog_url()
       soup = get_soup(liveblog_url)
       content = soup.find(class_="wysiwyg wysiwyg--all-content css-1ck9wyi")
 
       image_tag = content.find("img")
-      image_src = self.home_url + image_tag["src"]
+      image_src = cls.home_url + image_tag["src"]
       clean_src = re.search(r"^.*(?=\?)", image_src).group(0)
 
       return clean_src
 
-bbc       = BBC()
-aljazeera = Aljazeera()
-
 if __name__ == "__main__":
-  print (bbc.render_summary_points())
+  print (Aljazeera.render_summary_points())

@@ -1,5 +1,5 @@
 import discord
-from scraper import bbc, aljazeera
+from scraper import BBC, Aljazeera
 
 bot = discord.Bot()
 
@@ -11,7 +11,7 @@ async def on_ready():
 async def bbcs_summary(ctx):
   await ctx.respond("BBC's summary:")
   try:
-    await ctx.send(bbc.render_summary_points())
+    await ctx.send(BBC.render_summary_points())
   except Exception as error:
     await ctx.send(f"ERROR: {error}")
 
@@ -19,7 +19,7 @@ async def bbcs_summary(ctx):
 async def aljazeeras_summary(ctx):
   await ctx.respond("Al Jazeera's summary:")
   try:
-    await ctx.send(aljazeera.render_summary_points())
+    await ctx.send(Aljazeera.render_summary_points())
   except Exception as error:
     await ctx.send(f"ERROR: {error}")
 
@@ -27,7 +27,7 @@ async def aljazeeras_summary(ctx):
 async def map_of_ukraine(ctx):
   await ctx.respond("Who controls what today:")
   try:
-    await ctx.send(aljazeera.get_map())
+    await ctx.send(Aljazeera.get_map())
   except Exception as error:
     await ctx.send(f"ERROR: {error}")
   
