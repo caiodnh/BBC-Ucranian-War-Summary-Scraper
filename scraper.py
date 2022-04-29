@@ -67,6 +67,8 @@ class BBC(LiveNews):
                         "Russia",
                         "Zelensky",
                         "Putin",
+                        "Kyiv",
+                        "Moscow",
                         "Donbas",
                         "Mariupol",
                         "Donestk",
