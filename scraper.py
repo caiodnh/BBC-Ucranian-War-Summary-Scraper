@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, List
+from typing import Any, List, Optional
 import re
 import requests
 from bs4 import BeautifulSoup
@@ -26,23 +26,25 @@ class LiveNews(ABC):
     pass
 
   # What follows will be the same for all subclasses:
-  def set_liveblog_url(self) -> None:
+  def get_liveblog_url(self) -> None:
     soup_home = get_soup(self.home_url)
-    self.liveblog_url = self.home_url + self.find_liveblog(soup_home)
+    return self.home_url + self.find_liveblog(soup_home)
 
-  def summary_points(self) -> List[str]:
-    self.set_liveblog_url()
-    soup_liveblog = get_soup(self.liveblog_url)
+  def summary_points(self, url : Optional[str] = None) -> List[str]:
+    if url is None:
+      url = self.get_liveblog_url()
+    soup_liveblog = get_soup(url)
     return self.get_points(soup_liveblog)
 
   def render_summary_points(self) -> str:
-    points = self.summary_points()
+    liveblog_url = self.get_liveblog_url()
+    points = self.summary_points(url = liveblog_url)
 
     marked_points = ["- " + point for point in points]
     flattened_points = "\n\n".join(marked_points)
     wrapped = "```\n" + flattened_points + "\n```"
 
-    final = wrapped + "\n" + "<" + self.liveblog_url +">"
+    final = wrapped + "\n" + "<" + liveblog_url +">"
 
     return final
 
@@ -102,8 +104,8 @@ class Aljazeera(LiveNews):
       return [flatten_item(item) for item in items]
 
     def get_map(self) -> str:
-      self.set_liveblog_url()
-      soup = get_soup(self.liveblog_url)
+      liveblog_url = self.get_liveblog_url()
+      soup = get_soup(liveblog_url)
       content = soup.find(class_="wysiwyg wysiwyg--all-content css-1ck9wyi")
 
       image_tag = content.find("img")
