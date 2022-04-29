@@ -1,1 +1,2 @@
-The plan is to learn how to write a webscraper to fetch data about the Ucranian war in the BBC website.
+A webscraper to fetch data about the war on Ukraine from BBC and Al Jazeera websites.
+It also includes a Discord bot.
