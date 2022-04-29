@@ -59,7 +59,15 @@ class BBC(LiveNews):
         url = link["href"]
         if pat.fullmatch(url):
           link_name = link.contents[0]
-          if "Ukraine" in link_name or "Russia" in link_name or "Zelensky" in link_name or "Putin" in link_name:
+          key_words = (["Ukraine",
+                        "Russia",
+                        "Zelensky",
+                        "Putin",
+                        "Donbas",
+                        "Mariupol",
+                        "Donestk",
+                        "Luhansk"])
+          if any(key_word in link_name for key_word in key_words):
             return url
       raise ValueError("Couldn't find a liveblog on BBC's frontpage")
 
@@ -118,4 +126,4 @@ bbc       = BBC()
 aljazeera = Aljazeera()
 
 if __name__ == "__main__":
-  print (aljazeera.render_summary_points())
+  print (bbc.render_summary_points())
