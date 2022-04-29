@@ -54,8 +54,8 @@ class LiveNews(ABC):
 class BBC(LiveNews):
     home_url = "https://www.bbc.com"
 
-    @classmethod
-    def find_liveblog(cls, soup : Soup) -> str:
+    @staticmethod
+    def find_liveblog(soup : Soup) -> str:
       links = soup.find_all("a")
       
       pat = re.compile(r"/news/live/world-europe-.*")
@@ -77,16 +77,16 @@ class BBC(LiveNews):
             return url
       raise ValueError("Couldn't find a liveblog on BBC's frontpage")
 
-    @classmethod
-    def get_points(cls, soup : Soup) -> List[str]:
+    @staticmethod
+    def get_points(soup : Soup) -> List[str]:
       items = soup.find_all("li", class_ = "lx-c-summary-points__item")
       return [item.contents[0] for item in items]
 
 class Aljazeera(LiveNews):
     home_url = "https://www.aljazeera.com"
 
-    @classmethod
-    def find_liveblog(cls, soup : Any) -> str:
+    @staticmethod
+    def find_liveblog(soup : Any) -> str:
       fte_articles = soup.find_all("div", class_ = "fte-article__title")
 
       liveblogs = []
@@ -104,8 +104,8 @@ class Aljazeera(LiveNews):
           return url
       raise ValueError("Couldn't find a liveblog about Ukraine on Aljazeera's frontpage")
 
-    @classmethod
-    def get_points(cls, soup : Soup) -> List[str]:
+    @staticmethod
+    def get_points(soup : Soup) -> List[str]:
       block = soup.find(class_="wysiwyg wysiwyg--all-content css-1ck9wyi")
       items = block.find_all("li")
 
@@ -133,4 +133,4 @@ class Aljazeera(LiveNews):
       return clean_src
 
 if __name__ == "__main__":
-  print (Aljazeera.render_summary_points())
+  print (BBC.render_summary_points())
