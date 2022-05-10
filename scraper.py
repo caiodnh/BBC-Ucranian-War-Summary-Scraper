@@ -98,9 +98,19 @@ class Aljazeera(LiveNews):
             liveblogs.append(url)
         except:
           pass
-
+      
+      key_words = (["ukraine",
+                    "russia",
+                    "zelensky",
+                    "putin",
+                    "kyiv",
+                    "moscow",
+                    "donbas",
+                    "mariupol",
+                    "donestk",
+                    "luhansk"])
       for url in liveblogs:
-        if "ukraine" in url:
+        if any(key_word in url for key_word in key_words):
           return url
       raise ValueError("Couldn't find a liveblog about Ukraine on Aljazeera's frontpage")
 
